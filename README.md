@@ -19,6 +19,7 @@ Environment
   - tkinter
   - pycryptodome
   - VLC
+
 Dependencies
   - tkinter
   - pycryptodome
