@@ -58,6 +58,7 @@ Listener Setup (Computer A):
   - Set IP to 127.0.0.1 (for same-machine testing)
   - Set port (e.g., 12345)
   - Click Listen
+
 Connector Setup (Computer B):
   - Enter same password and encryption type
   - Set IP to listener's IP (127.0.0.1 for local testing)
@@ -69,11 +70,13 @@ Text Messages:
   - Type message in input box
   - Press Enter or click Send
   - Ciphertext snippet appears in chat
+
 Files:
   - Click Send File
   - Select any file type
   - File will be encrypted and transmitted
   - Receiver will be prompted to save
+
 Testing Media Files
   - Send test media files (jpg, mp3, mp4)
   - Receiver saves file when prompted
