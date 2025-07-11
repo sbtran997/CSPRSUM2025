@@ -26,30 +26,45 @@ Dependencies
 
 # Setup Instructions
 1. Prepare SEED Lab Environment
+
    a. Install the SEED Ubuntu 20.04 VM
-   b. Update the system: _sudo apt update_
+   
+   b. Update the system:
 
-2. Install Required Packages
-  a. Install tkinter: _sudo apt install python3-tk_
-  b. Install pycryptodome (if not done): _pip3 install pycryptodome_
-  c. Install VLC
-    _sudo apt-get install ubuntu-restricted-extra_
-    _sudo apt-get install vlc_
+       sudo apt update
 
-3. Prepare Files with in SEED environment
-  a. Create a test directory and add sample files:
-    mkdir messenger
-    cd messenger
-  b. Add test files:
-    _touch projectTestPhoto.jpg_
-    _touch StrawSqueak.mp3_
-    _touch projectTestVideo.mp4_
+3. Install Required Packages
 
-4. Download Application
-  a. Copy secure_messenger.py to your SEED Ubuntu environment.
+   a. Install tkinter:
+
+       sudo apt install python3-tk
+  
+   b. Install pycryptodome (if not done): _pip3 install pycryptodome_
+  
+   c. Install VLC
+  
+       sudo apt-get install ubuntu-restricted-extra
+       sudo apt-get install vlc
+
+5. Prepare Files with in SEED environment
+   
+   a. Create a test directory and add sample files:
+  
+       mkdir messenger
+       cd messenger
+    
+   b. Add test files:
+  
+       touch projectTestPhoto.jpg
+       touch StrawSqueak.mp3
+       touch projectTestVideo.mp4
+
+6. Download Application
+   
+   a. Copy _secure_messenger.py_ to your SEED Ubuntu environment.
 
 # Running the Application
-  _python3 secure_messenger.py_
+     python3 secure_messenger.py
 
 Connection Setup
 Listener Setup (Computer A):
