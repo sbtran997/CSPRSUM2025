@@ -1,6 +1,6 @@
 # Secure P2P Messenger - README
 # Overview
-Secure P2P Messenger is an encrypted peer-to-peer communication tool that allows users to securely exchange text messages and files using either DES (56-bit) or AES (128-bit) encryption. Developed for SEED Labs, this application demonstrates core security concepts while providing a functional GUI-based messaging system.
+Secure P2P Messenger is a secure instant messaging tool designed for SEED Labs that enables encrypted peer-to-peer communication between Alice and Bob. The system allows users to securely exchange text messages and files (images, audio, video) using either DES (56-bit) or AES (128-bit) encryption. Both parties must share the same password to establish secure communication.
 
 # Features
   - End-to-End Encryption: Choose between DES or AES encryption
