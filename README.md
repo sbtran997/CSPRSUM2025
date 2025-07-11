@@ -13,17 +13,12 @@ Secure P2P Messenger is an encrypted peer-to-peer communication tool that allows
   - Connection Status: Visual indicators for connection state
 
 # Requirements
-Environment
+Dependencies and Environment
   - SEED Ubuntu 20.04 Lab Environment
   - Python 3.6+
   - tkinter
   - pycryptodome
   - VLC
-
-Dependencies
-  - tkinter
-  - pycryptodome
-  - vlc (for video playing)
 
 # Setup Instructions
 1. Prepare SEED Lab Environment
