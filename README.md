@@ -13,7 +13,7 @@ Secure P2P Messenger is a secure instant messaging tool designed for SEED Labs t
   - Connection Status: Visual indicators for connection state
 
 # Requirements
-Dependencies and Environment
+Environment and Dependencies
   - SEED Ubuntu 20.04 Lab Environment
   - Python 3.6+
   - tkinter
