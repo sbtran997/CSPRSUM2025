@@ -23,7 +23,7 @@ Dependencies and Environment
 # Installing Virtual Box with the Seed Labs Environment
 1. Starting off at the Seed Labs Website
    
-   a. https://seedsecuritylabs.org/labsetup.html
+   a. Start off here: https://seedsecuritylabs.org/labsetup.html
    
    b. Choose Ubuntu 20.04 and follow the steps
 
@@ -34,6 +34,7 @@ Dependencies and Environment
 4. Download the SEED-Ubuntu20.04.zip file from the SEED website provided earlier
 
 5. Follow the steps provided in the VM Manual from the Seed Lab website or through this link:
+   
    a. https://github.com/seed-labs/seed-labs/blob/master/manuals/vm/seedvm-manual.md
 
 # Setup Instructions
