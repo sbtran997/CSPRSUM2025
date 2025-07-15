@@ -142,6 +142,7 @@ Environment and Dependencies
 2. Network Testing:
 
    a. Very similar steps above, but just use the correct IP addresses and Ports within the application.
+
    b. Also, 1 terminal for each machine.
 
 # Troubleshooting:
