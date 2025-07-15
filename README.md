@@ -36,6 +36,8 @@ Environment and Dependencies
 5. Follow the steps provided in the VM Manual from the Seed Lab website or through this link:
    
    a. https://github.com/seed-labs/seed-labs/blob/master/manuals/vm/seedvm-manual.md
+   
+   b. Make sure to enable Copy and Paste
 
 # Setup Instructions
 1. Prepare SEED Lab Environment
@@ -52,7 +54,9 @@ Environment and Dependencies
 
        sudo apt install python3-tk
   
-   b. Install pycryptodome (if not done): _pip3 install pycryptodome_
+   b. Install pycryptodome (if not done):
+
+       pip3 install pycryptodome
   
    c. Install VLC
   
@@ -66,18 +70,79 @@ Environment and Dependencies
        mkdir messenger
        cd messenger
     
-   b. Add test files:
+   b. Add picture, audio, and video test files:
   
-       touch projectTestPhoto.jpg
-       touch StrawSqueak.mp3
-       touch projectTestVideo.mp4
+       touch example.jpg
+       touch example.mp3
+       touch example.mp4
 
 6. Download Application
    
    a. Copy _secure_messenger.py_ to your SEED Ubuntu environment.
 
 # Running the Application
-     python3 secure_messenger.py
+
+1. Local Testing:
+   
+   a. Once everything is setup in your environment, open up 2 terminals in your VM and run the command:
+
+       python3 secure_messenger.py
+
+2. Connection Setup for Listener (Computer 1)
+
+   a. In your first terminal enter a password that would be used for both "users"
+   
+   b. Select encryption type (both ends must match)
+
+   c. Set IP to 127.0.0.1 (for same machine testing)
+
+   d. Set the port value (e.g., 12345)
+
+   e. Click Listen
+
+3. Connection Setup for Connector (Computer 2)
+
+   a. In your second terminal enter the same password and encryption type
+   
+   b. Set IP to listener's IP (127.0.0.1 for local testing)
+
+   c. Set same port as listener
+
+   d. Click Connect
+
+4. Sending Messsages
+   
+   a. Type a message in the input box
+
+   b. Click Send
+
+   c. Plaintext and Ciphertext outputted for the Connector
+   
+6. Sending Files
+   
+   a. Click Send File
+
+   b. Select one of the test files
+
+   c. File will be encrypted and transmitted
+
+   d. Receiver will be prompted to save
+   
+7. Sending Video Files
+   
+   a. Send the example video file (.mp4)
+
+   b. Connector saves file when prompted
+
+   c. Open saved file with VLC/media player:
+
+   _vlc received_projectTestVideo.mp4_
+   
+
+2. Machine to Machine Testing:
+
+   a. Very similar steps above, but just use the correct IP addresses and Ports within the application.
+   b. Also, 1 terminal for each machine.
 
 Connection Setup
 Listener Setup (Computer A):
