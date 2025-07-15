@@ -1,8 +1,8 @@
 # Secure P2P Messenger - README
-# Overview
+# Overview:
 Secure P2P Messenger is a secure instant messaging tool designed for SEED Labs that enables encrypted peer-to-peer communication between Alice and Bob. The system allows users to securely exchange text messages and files (images, audio, video) using either DES (56-bit) or AES (128-bit) encryption. Both parties must share the same password to establish secure communication.
 
-# Features
+# Features:
   - End-to-End Encryption: Choose between DES or AES encryption
   - Multiple Message Types:
     - Encrypted text messages
@@ -12,7 +12,7 @@ Secure P2P Messenger is a secure instant messaging tool designed for SEED Labs t
   - Simple GUI: Built with Tkinter for easy interaction
   - Connection Status: Visual indicators for connection state
 
-# Requirements
+# Requirements:
 Environment and Dependencies
   - SEED Ubuntu 20.04 Lab Environment
   - Python 3.6+
@@ -20,7 +20,7 @@ Environment and Dependencies
   - pycryptodome
   - VLC
 
-# Installing Virtual Box with the Seed Labs Environment
+# Installing Virtual Box with the Seed Labs Environment:
 1. Starting off at the Seed Labs Website
    
    a. Start off here: https://seedsecuritylabs.org/labsetup.html
@@ -39,7 +39,7 @@ Environment and Dependencies
    
    b. Make sure to enable Copy and Paste
 
-# Setup Instructions
+# Setup Instructions:
 1. Prepare SEED Lab Environment
 
    a. Install the SEED Ubuntu 20.04 VM (If you have not done that already)
@@ -80,7 +80,7 @@ Environment and Dependencies
    
    a. Copy _secure_messenger.py_ to your SEED Ubuntu environment.
 
-# Running the Application
+# Running the Application:
 
 1. Local Testing:
    
@@ -166,7 +166,7 @@ Environment and Dependencies
 
   - Try resetting keys after connection
 
-# Common Mistakes
+# Common Mistakes:
 
 - Not using the same "Your Port" on both machines (Local Testing)
 
