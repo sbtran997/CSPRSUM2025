@@ -136,7 +136,7 @@ Environment and Dependencies
 
    c. Open saved file with VLC/media player:
 
-   _vlc received_projectTestVideo.mp4_
+       _vlc received_projectTestVideo.mp4_
    
 
 2. Machine to Machine Testing:
@@ -144,34 +144,6 @@ Environment and Dependencies
    a. Very similar steps above, but just use the correct IP addresses and Ports within the application.
    b. Also, 1 terminal for each machine.
 
-Connection Setup
-Listener Setup (Computer A):
-  - Enter password (must match on both ends)
-  - Select encryption type (both ends must match)
-  - Set IP to 127.0.0.1 (for same-machine testing)
-  - Set port (e.g., 12345)
-  - Click Listen
+# Troubleshooting:
 
-Connector Setup (Computer B):
-  - Enter same password and encryption type
-  - Set IP to listener's IP (127.0.0.1 for local testing)
-  - Set same port as listener
-  - Click Connect
-
-Sending Messages
-Text Messages:
-  - Type message in input box
-  - Press Enter or click Send
-  - Ciphertext snippet appears in chat
-
-Files:
-  - Click Send File
-  - Select any file type
-  - File will be encrypted and transmitted
-  - Receiver will be prompted to save
-
-Testing Media Files
-  - Send test media files (jpg, mp3, mp4)
-  - Receiver saves file when prompted
-  - Open saved file with VLC/media player:
-    _vlc received_projectTestVideo.mp4_
+1. 
