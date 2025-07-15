@@ -114,13 +114,13 @@ Environment and Dependencies
    
    a. Type a message in the input box
 
-   b. Click Send
+   b. Click Send (Sometimes hidden when the window is small)
 
    c. Plaintext and Ciphertext outputted for the Connector
    
 6. Sending Files
    
-   a. Click Send File
+   a. Click Send File (Sometimes hidden when the window is small)
 
    b. Select one of the test files
 
@@ -136,14 +136,41 @@ Environment and Dependencies
 
    c. Open saved file with VLC/media player:
 
-       _vlc received_projectTestVideo.mp4_
+       # Output should be something similar to "vlc received_projectTestVideo.mp4"
    
 
-2. Machine to Machine Testing:
+2. Network Testing:
 
    a. Very similar steps above, but just use the correct IP addresses and Ports within the application.
    b. Also, 1 terminal for each machine.
 
 # Troubleshooting:
 
-1. 
+- If connection fails:
+
+  - Check if ports aren't blocked by firewall, are being used by other processes, or try different port numbers
+  -     netstat -ano | findstr <port>
+
+  - Verify IP address is correct
+
+  - Ensure listener is running before connecting
+ 
+  - Try restarting both applications
+
+- If messages don't decrypt:
+
+  - Confirm passwords match exactly and 
+
+  - Verify both selected same algorithm
+
+  - Try resetting keys after connection
+
+# Common Mistakes
+
+- Not using the same "Your Port" on both machines (Local Testing)
+
+- Different passwords/algorithms on each end
+
+- Trying to connect before listener is active
+
+- Using ports already occupied by other applications
