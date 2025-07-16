@@ -1,50 +1,56 @@
-import socket
-import threading
-import tkinter as tk
+import socket    # networking using sockets
+import threading    # Runs the server in the backend concurrently
+import tkinter as tk    # GUI
 from tkinter import filedialog, messagebox
-from Crypto.Cipher import DES, AES
-from Crypto.Util.Padding import pad, unpad
-from Crypto.Protocol.KDF import PBKDF2
-import struct
-import os
-import time
-import binascii
+from Crypto.Cipher import DES, AES     # Encrpytion
+from Crypto.Util.Padding import pad, unpad     # PKCS7
+from Crypto.Protocol.KDF import PBKDF2    # Password Key
+import struct     # Handles the message protocol formatting
+import os    # Handles the file paths for messages and file transfer
+import time     # Adds time stamps within the textbox
+import binascii     # Handles binary and ASCII conversions for outputs
 
 class SecureMessenger:
     def __init__(self, root):
+        # Intial GUI setup
         self.root = root
         self.root.title("Secure P2P Messenger")
         self.root.geometry("600x500")
         
-        # GUI Setup
+        # Main GUI Frame Setup
         frame = tk.Frame(root)
         frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         
-        # Connection panel
+        # Connection panel frame
         conn_frame = tk.LabelFrame(frame, text="Connection Settings")
         conn_frame.pack(fill=tk.X, pady=(0, 10))
-        
+
+        # Password Box
         tk.Label(conn_frame, text="Password:").grid(row=0, column=0, sticky="w")
         self.password = tk.Entry(conn_frame, show="*", width=30)
         self.password.grid(row=0, column=1, padx=5, pady=2)
-        
+
+        # Encryption Selection frame
         tk.Label(conn_frame, text="Key Length:").grid(row=1, column=0, sticky="w")
         self.key_length = tk.StringVar(value="128")
         key_frame = tk.Frame(conn_frame)
         key_frame.grid(row=1, column=1, sticky="w")
         tk.Radiobutton(key_frame, text="56-bit (DES)", variable=self.key_length, value="56").pack(side=tk.LEFT)
         tk.Radiobutton(key_frame, text="128-bit (AES)", variable=self.key_length, value="128").pack(side=tk.LEFT, padx=(10,0))
-        
+
+        # IP Field Textbox
         tk.Label(conn_frame, text="IP:").grid(row=2, column=0, sticky="w")
         self.ip_entry = tk.Entry(conn_frame, width=30)
         self.ip_entry.grid(row=2, column=1, padx=5, pady=2)
         self.ip_entry.insert(0, "127.0.0.1")
-        
+
+        # Port Field textbox
         tk.Label(conn_frame, text="Port:").grid(row=3, column=0, sticky="w")
         self.port_entry = tk.Entry(conn_frame, width=30)
         self.port_entry.grid(row=3, column=1, padx=5, pady=2)
         self.port_entry.insert(0, "12345")
-        
+
+        # Listen and Connect Button with initial status text
         btn_frame = tk.Frame(conn_frame)
         btn_frame.grid(row=4, column=0, columnspan=2, pady=5)
         self.connect_btn = tk.Button(btn_frame, text="Listen", command=self.start_server)
@@ -57,16 +63,20 @@ class SecureMessenger:
         # Chat panel
         chat_frame = tk.LabelFrame(frame, text="Messaging")
         chat_frame.pack(fill=tk.BOTH, expand=True)
-        
+
+        # Chat textbox display (read-only)
         self.chat_box = tk.Text(chat_frame, state=tk.DISABLED)
         self.chat_box.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
+        # Chat input textbox
         input_frame = tk.Frame(chat_frame)
         input_frame.pack(fill=tk.X, pady=5)
         
         self.msg_entry = tk.Entry(input_frame)
         self.msg_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0,5))
         self.msg_entry.bind("<Return>", lambda e: self.send_text())
+
+        # Send and Send file buttons
         self.send_btn = tk.Button(input_frame, text="Send", command=self.send_text)
         self.send_btn.pack(side=tk.LEFT, padx=(0,5))
         self.file_btn = tk.Button(input_frame, text="Send File", command=self.send_file)
@@ -80,39 +90,41 @@ class SecureMessenger:
         self.receive_thread = None
     
     def update_status(self, message, color="black"):
-        """Update status label and chat box with timestamped message"""
-        timestamp = time.strftime("%H:%M:%S", time.localtime())
-        self.status_label.config(text=f"Status: {message}", fg=color)
-        self._update_chat(f"[{timestamp}] {message}")
+        # Update status label and chat box with timestamped message
+        timestamp = time.strftime("%H:%M:%S", time.localtime()) # Gets current time
+        self.status_label.config(text=f"Status: {message}", fg=color) # Changes status label within the connections frame
+            # color changes for different states: green = connected, orange = transition state, red = error or disconnected
+        self._update_chat(f"[{timestamp}] {message}") # Updates chat display with the formatted time and message
     
     def derive_key(self):
-        """Derive encryption key from password"""
-        salt = b'fixed_salt_'  # In real system, exchange salt securely
-        key_len = int(self.key_length.get())
-        return PBKDF2(self.password.get().encode(), salt, dkLen=key_len//8)
+        # Derive encryption key from password
+        salt = b'fixed_salt_'  # Salting
+        key_len = int(self.key_length.get()) # Key length from encryption button inputs and converts the string to integer values
+        return PBKDF2(self.password.get().encode(), salt, dkLen=key_len//8) # takes the password, salt, and key lgenth to make a key
+            # converts the password set in the textbox into bytes
     
     def encrypt(self, data):
-        """Encrypt data with selected algorithm"""
-        key = self.derive_key()
-        if self.key_length.get() == "56":
-            cipher = DES.new(key, DES.MODE_CBC)
-            ct_bytes = cipher.encrypt(pad(data, DES.block_size))
-            return cipher.iv + ct_bytes
-        else:
-            cipher = AES.new(key, AES.MODE_CBC)
-            ct_bytes = cipher.encrypt(pad(data, AES.block_size))
-            return cipher.iv + ct_bytes
+        # Encrypt data with selected algorithm
+        key = self.derive_key() # creates key
+        if self.key_length.get() == "56": #DES ENCRYPTION
+            cipher = DES.new(key, DES.MODE_CBC) # Initialzies the DES cipher and creates IV as well
+            ct_bytes = cipher.encrypt(pad(data, DES.block_size)) # Pad messeges with block size (8) and then encrypts
+            return cipher.iv + ct_bytes # Returns cocatenation of IV and ciphertext
+        else: #AES ENCRYPTION
+            cipher = AES.new(key, AES.MODE_CBC) # Initialzies the AES cipher and creates IV as well
+            ct_bytes = cipher.encrypt(pad(data, AES.block_size)) # Pad messeges with block size (16) and then encrypts
+            return cipher.iv + ct_bytes # Returns cocatenation of IV and ciphertext
     
     def decrypt(self, data):
-        """Decrypt received data"""
-        key = self.derive_key()
-        if self.key_length.get() == "56":
-            iv, ct = data[:8], data[8:]
-            cipher = DES.new(key, DES.MODE_CBC, iv)
-            return unpad(cipher.decrypt(ct), DES.block_size)
-        else:
-            iv, ct = data[:16], data[16:]
-            cipher = AES.new(key, AES.MODE_CBC, iv)
+        # Decrypt received data
+        key = self.derive_key() # recreates the same key
+        if self.key_length.get() == "56": #DES DECRYPTION
+            iv, ct = data[:8], data[8:] #Splits the recieved data into IV and ciphertext
+            cipher = DES.new(key, DES.MODE_CBC, iv) #Recreates the same cipher in encryption
+            return unpad(cipher.decrypt(ct), DES.block_size) # Decryption 
+        else: #AES DECRYPTION (Mostly the same as DES)
+            iv, ct = data[:16], data[16:] 
+            cipher = AES.new(key, AES.MODE_CBC, iv) 
             return unpad(cipher.decrypt(ct), AES.block_size)
     
     def start_server(self):
