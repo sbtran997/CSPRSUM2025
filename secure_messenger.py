@@ -128,143 +128,149 @@ class SecureMessenger:
             return unpad(cipher.decrypt(ct), AES.block_size)
     
     def start_server(self):
-        """Start listening socket"""
-        if self.receive_thread and self.receive_thread.is_alive():
+        # Start listening socket
+        if self.receive_thread and self.receive_thread.is_alive(): # checks if server is already running if it is exit
             return
-        self.update_status("Starting server...", "orange")
-        threading.Thread(target=self._run_server, daemon=True).start()
+        self.update_status("Starting server...", "orange") #change status to transition state
+        threading.Thread(target=self._run_server, daemon=True).start() # Creates a thread object that maintains the server and exits on application closing
     
-    def _run_server(self):
+    def _run_server(self): #Listener
         try:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.bind(('0.0.0.0', int(self.port_entry.get())))
-            self.sock.listen(1)
-            self.update_status(f"Listening on port {self.port_entry.get()}...", "orange")
-            self.connection, addr = self.sock.accept()
-            self.connected = True
-            self.update_status(f"Connected to {addr[0]}", "green")
-            self._receive_messages()
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #creates a socket object
+            self.sock.bind(('0.0.0.0', int(self.port_entry.get()))) # assigns the socket with a listen IP address and a port number
+            self.sock.listen(1) # Limits the number of connections to 1
+            self.update_status(f"Listening on port {self.port_entry.get()}...", "orange") # changes status to a listening state
+            self.connection, addr = self.sock.accept() # New socket object that represents the connection to the connector, addr contains the IP address and portnumber of the connector
+            self.connected = True 
+            self.update_status(f"Connected to {addr[0]}", "green") #changes status to connected
+            self._receive_messages() #Runs a continuous funtion to actively listen and send messesages and files until connection is closed or loss
         except Exception as e:
-            self.update_status(f"Server error: {str(e)}", "red")
+            self.update_status(f"Server error: {str(e)}", "red") # handles errors
     
     def connect_to_server(self):
-        """Connect to remote peer"""
-        if self.connected:
+        # Connect to remote peer
+        if self.connected: # checks if connector is already connected if it is exit
             return
-        self.update_status("Connecting...", "orange")
-        threading.Thread(target=self._connect, daemon=True).start()
+        self.update_status("Connecting...", "orange") # change status to transition state
+        threading.Thread(target=self._connect, daemon=True).start() # Creates a thread object that maintains the connection and exits on application closing
     
-    def _connect(self):
+    def _connect(self): #Connector
         try:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect((self.ip_entry.get(), int(self.port_entry.get())))
-            self.connection = self.sock
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creates a socket object
+            self.sock.connect((self.ip_entry.get(), int(self.port_entry.get()))) # Attempting to reach a connection to the listener
+            self.connection = self.sock # Transfer the main socket to the connection socket
             self.connected = True
-            self.update_status(f"Connected to {self.ip_entry.get()}", "green")
-            self._receive_messages()
+            self.update_status(f"Connected to {self.ip_entry.get()}", "green") #changes status to connected
+            self._receive_messages() #Runs a continuous funtion to actively listen and send messesages and files until connection is closed or loss
         except Exception as e:
-            self.update_status(f"Connection failed: {str(e)}", "red")
+            self.update_status(f"Connection failed: {str(e)}", "red") # handles errors 
     
     def send_text(self):
-        """Send encrypted text message"""
-        if not self.connected or not self.connection:
+        # Send encrypted text message
+        if not self.connected or not self.connection: # If no connection exists exits and if there is one continue
             self.update_status("Not connected!", "red")
             return
             
-        msg = self.msg_entry.get()
-        if not msg:
+        msg = self.msg_entry.get() # get user input
+        if not msg: #Checks for empty messages
             return
             
         try:
-            encrypted = self.encrypt(msg.encode())
+            encrypted = self.encrypt(msg.encode()) # encrypts message
             # Message format: [TYPE=0x01][LENGTH][DATA]
-            header = b'\x01' + struct.pack('!I', len(encrypted))
-            self.connection.sendall(header + encrypted)
+            header = b'\x01' + struct.pack('!I', len(encrypted)) # header for data
+            self.connection.sendall(header + encrypted) #send both header and data
             
-            # ADDED: Show ciphertext in chat
+            # Shows ciphertext in chat
             cipher_hex = binascii.hexlify(encrypted).decode('utf-8')
-            short_cipher = cipher_hex[:32] + "..." if len(cipher_hex) > 32 else cipher_hex
+            short_cipher = cipher_hex[:32] + "..." if len(cipher_hex) > 32 else cipher_hex # creates a truncated version if too long
             self._update_chat(f"You: {msg}", "blue")
             self._update_chat(f"  [Ciphertext: {short_cipher} ({len(encrypted)} bytes)]", "gray")
             
-            self.msg_entry.delete(0, tk.END)
+            self.msg_entry.delete(0, tk.END) # clears input box
         except Exception as e:
-            self.update_status(f"Send error: {str(e)}", "red")
+            self.update_status(f"Send error: {str(e)}", "red") # error handling
     
     def send_file(self):
-        """Send encrypted file"""
-        if not self.connected or not self.connection:
+        # Send encrypted file
+        if not self.connected or not self.connection: # If no connection exists exits and if there is one continue
             self.update_status("Not connected!", "red")
             return
             
-        filepath = filedialog.askopenfilename()
-        if not filepath:
+        filepath = filedialog.askopenfilename() # opens a file directory to choose a file from
+        if not filepath: # checks to see if there is file to be sent
             return
             
-        try:
+        try: # reads file data
             with open(filepath, 'rb') as f:
-                file_data = f.read()
-            encrypted = self.encrypt(file_data)
-            filename = os.path.basename(filepath).encode()
+                file_data = f.read() #reads data into variable
+            encrypted = self.encrypt(file_data) #encrypts
+            filename = os.path.basename(filepath).encode() 
             
-            # Message format: [TYPE=0x02][FILENAME_LEN][FILENAME][DATA_LEN][DATA]
+            # Constructs a messaga format of [TYPE=0x02][FILENAME_LEN][FILENAME][DATA_LEN][DATA]
+                # TYPE=0x02 - A single byte indicating this is a file 
+                # FILENAME_LEN - the length of the `filename` bytes
+                # FILENAME: The actual filename bytes
+                # DATA_LEN: the length of the `encrypted` file data
+                # DATA: The actual encrypted file bytes
             header = b'\x02' + struct.pack('!I', len(filename)) + filename
             header += struct.pack('!I', len(encrypted))
             
-            self.connection.sendall(header + encrypted)
+            self.connection.sendall(header + encrypted) # sends data
             
-            # ADDED: Show ciphertext in chat
+            # Shows ciphertext in chat
             cipher_hex = binascii.hexlify(encrypted).decode('utf-8')
             short_cipher = cipher_hex[:32] + "..." if len(cipher_hex) > 32 else cipher_hex
             self._update_chat(f"Sent file: {filename.decode()}", "darkgreen")
             self._update_chat(f"  [Ciphertext: {short_cipher} ({len(encrypted)} bytes)]", "gray")
         except Exception as e:
-            self.update_status(f"File send failed: {str(e)}", "red")
+            self.update_status(f"File send failed: {str(e)}", "red") # error handling
     
     def _receive_messages(self):
-        self.receive_thread = threading.current_thread()
-        while self.running and self.connected:
+        self.receive_thread = threading.current_thread() # stores current thread
+        while self.running and self.connected: # continues to run until application closes or network connection is lost
             try:
-                # Read message type (1 byte)
+                # Reads message type (1 byte)
                 msg_type = self.connection.recv(1)
-                if not msg_type:
+                if not msg_type: # if message type returns empty connection is closed
                     self.update_status("Connection closed by peer", "red")
                     self.connected = False
                     break
                     
                 # TEXT MESSAGE (0x01)
                 if msg_type == b'\x01':
-                    # Read message length
+                    # Reads message length
                     len_header = self.connection.recv(4)
-                    if not len_header:
+                    if not len_header: # Closes applicaiton if connection is lost
                         break
-                    msg_len = struct.unpack('!I', len_header)[0]
+                    msg_len = struct.unpack('!I', len_header)[0] # Tells how many bytes of enrrypted text there will be
                     
                     # Receive message data
                     data = b''
-                    while len(data) < msg_len:
+                    while len(data) < msg_len: # Continuously receive data until all msg_len bytes have been received
                         chunk = self.connection.recv(min(4096, msg_len - len(data)))
                         if not chunk:
                             break
                         data += chunk
                     
-                    if len(data) != msg_len:
+                    if len(data) != msg_len: # If we didn't get all expected bytes then go back to the start and wait for the next message
                         self.update_status("Incomplete text message received", "orange")
                         continue
                     
                     try:
+                        # Decrypta and display text message
                         decrypted = self.decrypt(data)
                         plaintext = decrypted.decode()
                         
-                        # ADDED: Show ciphertext in chat
+                        # Displaya ciphertext in chat
                         cipher_hex = binascii.hexlify(data).decode('utf-8')
                         short_cipher = cipher_hex[:32] + "..." if len(cipher_hex) > 32 else cipher_hex
                         self._update_chat(f"Peer: {plaintext}", "purple")
                         self._update_chat(f"  [Ciphertext: {short_cipher} ({len(data)} bytes)]", "gray")
                     except Exception as e:
-                        self.update_status(f"Decryption failed: {str(e)}", "red")
+                        self.update_status(f"Decryption failed: {str(e)}", "red") # error handling
                 
-                # FILE MESSAGE (0x02)
+                # Handling file messages (0x02)
                 elif msg_type == b'\x02':
                     # Read filename length
                     fn_len_header = self.connection.recv(4)
@@ -290,73 +296,77 @@ class SecureMessenger:
                         if not chunk:
                             break
                         file_data += chunk
-                    
+
+                    # If we didn't get all expected bytes then go back to the start and wait for the next message
                     if len(file_data) != file_len:
                         self.update_status("Incomplete file received", "orange")
                         continue
                     
                     try:
+                        # Decrypts and save file
                         decrypted = self.decrypt(file_data)
                         self._save_file(filename, decrypted)
                         
-                        # ADDED: Show ciphertext in chat
+                        # Displays ciphertext in chat
                         cipher_hex = binascii.hexlify(file_data).decode('utf-8')
                         short_cipher = cipher_hex[:32] + "..." if len(cipher_hex) > 32 else cipher_hex
                         self._update_chat(f"  [Ciphertext: {short_cipher} ({len(file_data)} bytes)]", "gray")
                     except Exception as e:
-                        self.update_status(f"File decryption failed: {str(e)}", "red")
+                        self.update_status(f"File decryption failed: {str(e)}", "red") # error handling
                 
                 else:
-                    self.update_status(f"Unknown message type: {msg_type}", "orange")
+                    self.update_status(f"Unknown message type: {msg_type}", "orange") # error handling
                     
             except ConnectionResetError:
-                self.update_status("Connection reset by peer", "red")
+                self.update_status("Connection reset by peer", "red") # error handling
                 self.connected = False
                 break
             except Exception as e:
-                self.update_status(f"Receive error: {str(e)}", "red")
+                self.update_status(f"Receive error: {str(e)}", "red") # error handling
                 continue
     
     def _save_file(self, filename, data):
         try:
+            # Decode the filename
             filename_str = filename.decode(errors='replace')
+            # Saving file gui/dialog
             save_path = filedialog.asksaveasfilename(
                 initialfile=filename_str,
                 title="Save received file"
             )
-            if save_path:
+            if save_path: #Checks if the user selected a save path, if they did writes the entire data to the chosen file path
                 with open(save_path, 'wb') as f:
                     f.write(data)
-                self._update_chat(f"Received file: {filename_str}", "darkmagenta")
+                self._update_chat(f"Received file: {filename_str}", "darkmagenta") # Update the chat box
         except Exception as e:
-            self.update_status(f"File save error: {str(e)}", "red")
+            self.update_status(f"File save error: {str(e)}", "red") # error handling
     
     def _update_chat(self, message, color="black"):
-        self.chat_box.config(state=tk.NORMAL)
-        if color not in self.chat_box.tag_names():
+        self.chat_box.config(state=tk.NORMAL) # Enables the chat box for writing
+        if color not in self.chat_box.tag_names(): # Configures text tag for coloring if it doesn't exist
             self.chat_box.tag_configure(color, foreground=color)
-        self.chat_box.insert(tk.END, message + "\n", color)
-        self.chat_box.config(state=tk.DISABLED)
+        self.chat_box.insert(tk.END, message + "\n", color) # Inserts message to the chat log
+        self.chat_box.config(state=tk.DISABLED) # disable chat box
         self.chat_box.yview(tk.END)
     
     def on_closing(self):
-        self.running = False
-        self.connected = False
-        if self.connection:
+        self.running = False # signals the recieve message function to stop
+        self.connected = False # signals other functions to stop
+        if self.connection: # checks if socket still exists
             try:
-                self.connection.shutdown(socket.SHUT_RDWR)
-                self.connection.close()
+                self.connection.shutdown(socket.SHUT_RDWR) # graceful shutdown for sockets
+                self.connection.close() # closes socket
             except:
                 pass
-        if self.sock:
+        if self.sock: # trying to close sockets if they exist
             try:
                 self.sock.close()
             except:
                 pass
-        self.root.destroy()
+        self.root.destroy() # destroys the tkinter gui
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = SecureMessenger(root)
-    root.protocol("WM_DELETE_WINDOW", app.on_closing)
-    root.mainloop()
+    root = tk.Tk() # sets up Tkinter window
+    app = SecureMessenger(root) # sets up GUI
+    root.protocol("WM_DELETE_WINDOW", app.on_closing) # protocol when closing out of the application
+    root.mainloop() # listens for gui inputs in the window and only stops until tkinter GUI is destroyed
