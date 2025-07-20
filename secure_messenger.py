@@ -137,10 +137,10 @@ class SecureMessenger:
     def _run_server(self): #Listener
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #creates a socket object
-            self.sock.bind(('0.0.0.0', int(self.port_entry.get()))) # assigns the socket with a listen IP address and a port number
+            self.sock.bind(('0.0.0.0', int(self.port_entry.get()))) # assigns the socket with port number
             self.sock.listen(1) # Limits the number of connections to 1
             self.update_status(f"Listening on port {self.port_entry.get()}...", "orange") # changes status to a listening state
-            self.connection, addr = self.sock.accept() # New socket object that represents the connection to the connector, addr contains the IP address and portnumber of the connector
+            self.connection, addr = self.sock.accept() # Accept incoming connection and blocks until client connects
             self.connected = True 
             self.update_status(f"Connected to {addr[0]}", "green") #changes status to connected
             self._receive_messages() #Runs a continuous funtion to actively listen and send messesages and files until connection is closed or loss
@@ -158,7 +158,7 @@ class SecureMessenger:
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creates a socket object
             self.sock.connect((self.ip_entry.get(), int(self.port_entry.get()))) # Attempting to reach a connection to the listener
-            self.connection = self.sock # Transfer the main socket to the connection socket
+            self.connection = self.sock # Setting connection references
             self.connected = True
             self.update_status(f"Connected to {self.ip_entry.get()}", "green") #changes status to connected
             self._receive_messages() #Runs a continuous funtion to actively listen and send messesages and files until connection is closed or loss
