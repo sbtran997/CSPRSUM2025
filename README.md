@@ -71,7 +71,7 @@ Environment and Dependencies
        cd messenger
     
    b. Add picture, audio, and video test files
-       (You can use your own or download them straight into the VM using pixabay):
+     i. (You can use your own or download them straight into the VM using pixabay):
   
        touch example.jpg
        touch example.mp3
