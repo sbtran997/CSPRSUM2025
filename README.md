@@ -58,7 +58,7 @@ Environment and Dependencies
 
        pip3 install pycryptodome
   
-   c. Install VLC
+   c. Install VLC (Use tab to get through EULA confirmation)
   
        sudo apt-get install ubuntu-restricted-extra
        sudo apt-get install vlc
