@@ -70,7 +70,7 @@ Environment and Dependencies
        mkdir messenger
        cd messenger
     
-   b. Add picture, audio, and video test files (You can use your own or find some on pixabay):
+   b. Add picture, audio, and video test files (You can use your own or download them straight into the VM using pixabay):
   
        touch example.jpg
        touch example.mp3
