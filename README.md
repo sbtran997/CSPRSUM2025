@@ -70,13 +70,14 @@ Environment and Dependencies
        mkdir messenger
        cd messenger
     
-   b. Add picture, audio, and video test files (You can use your own or download them straight into the VM using pixabay):
+   b. Add picture, audio, and video test files
+       (You can use your own or download them straight into the VM using pixabay):
   
        touch example.jpg
        touch example.mp3
        touch example.mp4
 
-6. Download Application
+7. Download Application
    
    a. Copy _secure_messenger.py_ to your SEED Ubuntu environment.
 
